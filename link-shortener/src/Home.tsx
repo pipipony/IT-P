@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const Home: React.FC = () => {
@@ -11,53 +12,47 @@ const Home: React.FC = () => {
     document.title = 'Сокращатель ссылок';
   }, []);
 
-  const handleSubmit = async () => {
-        setShortUrl('');
-        setError('');
+  const isValidUrl = useCallback((url: string) => {
+    const urlPattern = new RegExp(
+      '^(https?:\\/\\/)' +
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' +
+        '((\\d{1,3}\\.){3}\\d{1,3}))' +
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+        '(\\?[;&a-z\\d%_.~+=-]*)?' +
+        '(\\#[-a-z\\d_]*)?$',
+      'i'
+    );
+    return urlPattern.test(url);
+  }, []);
 
-        if (!isValidUrl(inputUrl)) {
-          setError('Неверная ссылка');
-          return;
-        }
+  const handleSubmit = useCallback(() => {
+      setShortUrl('');
+      setError('');
 
-        setLoading(true);
+      if (!isValidUrl(inputUrl)) {
+        setError('Неверная ссылка');
+        return;
+      }
 
-        try {
-          const response = await axios.post('http://127.0.0.1:9000/test/', {
-            original_url: inputUrl
-          });
-          setShortUrl(response.data.short_url);
-        } catch (err) {
-          setError('Ошибка при сокращении ссылки');
-        } finally {
+      setLoading(true);
+      setTimeout(() => {
+          /*
+          axios
+            .post('http://127.0.0.1:9000/test/', { original_url: inputUrl })
+            .then((response) => {
+              setShortUrl(response.data.short_url);
+            })
+            .catch(() => {
+              setError('Ошибка при создании короткой ссылки');
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+          */
+          setShortUrl('http://shorter.ru:3000/abcdf');
           setLoading(false);
-        }
-    };
-
-    const handleShortUrlClick = async () => {
-          setError('');
-          setLoading(true);
-
-          try {
-            const response = await axios.get('http://127.0.0.1:9000/');
-            window.location.href = response.data.original_url;
-          } catch (err) {
-            setError('Ошибка при получении сокращённой ссылки');
-          } finally {
-            setLoading(false);
-          }
-      };
-
-
-  const isValidUrl = (url: string) => {
-    const urlPattern = new RegExp('^(https?:\\/\\/)' + // Протокол (http или https)
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // Доменное имя
-      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // IP (v4)
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // Путь
-      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // Параметры
-      '(\\#[-a-z\\d_]*)?$','i'); // Якорь
-    return !!urlPattern.test(url);
-  };
+      }, 1000);
+    }, [inputUrl, isValidUrl]);
 
   return (
     <div className="container">
@@ -68,28 +63,24 @@ const Home: React.FC = () => {
         onChange={(e) => setInputUrl(e.target.value)}
         placeholder="Введите ссылку"
       />
-      <button
-        onClick={handleSubmit}
-      >
+      <button onClick={handleSubmit}>
         <strong>Сократить</strong>
       </button>
 
       {loading && (
-        <>
-          <div className="loading-overlay">
-              <div className="spinner"></div>
-          </div>
-        </>
+        <div className="loading-overlay">
+          <div className="spinner"></div>
+        </div>
       )}
 
       {error && <div className="error">{error}</div>}
 
       {!error && shortUrl && !loading && (
-          <div className="short-url">
-            <h2>
-                Короткая ссылка: <a href="#" onClick={handleShortUrlClick} target="_blank" rel="noopener noreferrer">{shortUrl}</a>
-            </h2>
-          </div>
+        <div className="short-url">
+          <h2>
+            Короткая ссылка: <Link to={`/${shortUrl.split('/').pop()}`}>{shortUrl}</Link>
+          </h2>
+        </div>
       )}
     </div>
   );
