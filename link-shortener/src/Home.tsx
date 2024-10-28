@@ -52,7 +52,7 @@ const Home: React.FC = () => {
           setShortUrl('http://shorter.ru:3000/abcdf');
           setLoading(false);
       }, 1000);
-    }, [inputUrl, isValidUrl]);
+    }, [inputUrl]);
 
   return (
     <div className="container">

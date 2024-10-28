@@ -23,7 +23,7 @@ const RedirectPage: React.FC = () => {
     const originalUrl = 'https://github.com/pipipony/IQtest/tree/front_alena';
     window.location.href = originalUrl;
 
-  }, [shortUrl, navigate]);
+  }, []);
 
   return (
       <div className="redirect-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
