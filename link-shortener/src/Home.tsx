@@ -26,33 +26,29 @@ const Home: React.FC = () => {
   }, []);
 
   const handleSubmit = useCallback(() => {
-      setShortUrl('');
-      setError('');
+    setShortUrl('');
+    setError('');
 
-      if (!isValidUrl(inputUrl)) {
-        setError('Неверная ссылка');
-        return;
-      }
+    if (!isValidUrl(inputUrl)) {
+      setError('Неверная ссылка');
+      return;
+    }
 
-      setLoading(true);
-      setTimeout(() => {
-          /*
-          axios
-            .post('http://127.0.0.1:9000/test/', { original_url: inputUrl })
-            .then((response) => {
-              setShortUrl(response.data.short_url);
-            })
-            .catch(() => {
-              setError('Ошибка при создании короткой ссылки');
-            })
-            .finally(() => {
-              setLoading(false);
-            });
-          */
-          setShortUrl('http://shorter.ru:3000/abcdf');
+    setLoading(true);
+    setTimeout(() => {
+      axios
+        .post('http://localhost:9000/shorten', { originalUrl: inputUrl })
+        .then((response) => {
+          setShortUrl(response.data.shortUrl);
+        })
+        .catch(() => {
+          setError('Ошибка при создании короткой ссылки');
+        })
+        .finally(() => {
           setLoading(false);
-      }, 1000);
-    }, [inputUrl]);
+        });
+    }, 1000);
+  }, [inputUrl]);
 
   return (
     <div className="container">

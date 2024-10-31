@@ -8,21 +8,15 @@ const RedirectPage: React.FC = () => {
 
   useEffect(() => {
     document.title = 'Перенаправление';
-    /*
     axios
-      .get(`http://127.0.0.1:9000/`)
+      .get(`http://localhost:9000/${shortUrl}`)
       .then((response) => {
-        const originalUrl = response.data.original_url;
+        const originalUrl = response.data.originalUrl;
         window.location.href = originalUrl;
       })
       .catch(() => {
         navigate('/');
       });
-    */
-
-    const originalUrl = 'https://github.com/pipipony/IQtest/tree/front_alena';
-    window.location.href = originalUrl;
-
   }, []);
 
   return (
