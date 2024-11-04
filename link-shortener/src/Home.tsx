@@ -39,7 +39,7 @@ const Home: React.FC = () => {
       axios
         .post('http://localhost:9000/shorten', { originalUrl: inputUrl })
         .then((response) => {
-          setShortUrl(response.data.shortUrl);
+          setShortUrl(`${window.location.origin}/${response.data.shortCode}`);
         })
         .catch(() => {
           setError('Ошибка при создании короткой ссылки');
