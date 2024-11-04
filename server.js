@@ -22,7 +22,7 @@ app.post('/shorten', (req, res) => {
     if (!shortLinks.has(shortCode)) {
         shortLinks.set(shortCode, originalUrl);
     }
-    res.json({ shortUrl: `http://localhost:3000/${shortCode}` });
+    res.json({ shortCode });
 });
 
 app.get('/:shortCode', (req, res) => {
